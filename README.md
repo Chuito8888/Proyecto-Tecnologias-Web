@@ -1,5 +1,5 @@
 
-#**Proyecto Tecnologías Web y Móviles para Diego-Chan**#
+***Proyecto Tecnologías Web y Móviles para Diego-Chan***
 
 **Miembros del Equipo:**
 
