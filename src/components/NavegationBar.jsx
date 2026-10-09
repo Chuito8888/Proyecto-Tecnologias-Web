@@ -6,7 +6,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 //La barra de navegación hace referencia a las rutas que estan en pages
-export default function NavegationBar() {
+export function NavegationBar() {
   return(
     <nav style={{ padding: '1rem', backgroundColor: '#3d3569' }}>
       <Link style={{ color: '#ffffffe2', textDecoration: 'underline' }} to="/">Inicio</Link> |{' '}
