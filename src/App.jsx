@@ -9,7 +9,7 @@ export function App() {
   return (
     <BrowserRouter>
       <NavegationBar />
-      <main style={{ padding: '1rem' }}>
+      <main style={{ padding: '1rem', backgroundColor: '#3a0b35' }}>
         <Routes>
             {/*Aquí se definen las rutas para las diferentes páginas de la aplicación*/}
             {/*Al checar la url se vé como cambia dependiendo de en que página estemos*/}

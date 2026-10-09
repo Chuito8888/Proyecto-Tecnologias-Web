@@ -7,7 +7,7 @@ import React from 'react';
 export function Dashboard() {
   return (
     <div>
-      <h1 style={{ color: '#c68fe5', fontWeight: 'bold', fontFamily: 'Arial, sans-serif' }}>Inicio / Dashboard</h1>
+      <h1 style={{ color: '#dae157', fontWeight: 'bold', fontFamily: 'Arial, sans-serif' }}>Inicio / Dashboard</h1>
       <p style={{fontFamily: 'Comic Sans MS'}}>Bienvenido al Dashboard causa</p>
     </div>
   );

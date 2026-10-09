@@ -6,7 +6,7 @@ import React from 'react';
 export function InterventionList() {
   return (
     <div>
-      <h1 style={{ color: '#c68fe5', fontWeight: 'bold', fontFamily: 'Arial, sans-serif' }}>Lista de Intervenciones</h1>
+      <h1 style={{ color: '#dae157', fontWeight: 'bold', fontFamily: 'Arial, sans-serif' }}>Lista de Intervenciones</h1>
       <p style ={{fontFamily: 'Comic Sans MS'}}>Bienvenido a la lista de intervenciones mamaguebo</p>
     </div>
   );
