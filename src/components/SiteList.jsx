@@ -6,8 +6,8 @@ import React from 'react';
 export function SiteList() {
   return (
     <div>
-      <h1 style={{ color: '#dae157', fontWeight: 'bold', fontFamily: 'Arial, sans-serif' }}>Lista de Centros</h1>
-      <p style ={{fontFamily: 'Comic Sans MS'}}>Baaaaancoestado </p>
+      <h1 className= "text-black font-bold">Lista de Centros</h1>
+      <p className= "text-black">Baaaaancoestado </p>
     </div>
   );
 }

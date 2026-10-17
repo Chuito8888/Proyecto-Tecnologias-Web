@@ -4,15 +4,29 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
+import logo from '../assets/logo.png';
 
 //La barra de navegación hace referencia a las rutas que estan en pages
-export function NavegationBar() {
+export function NavegationBar({onLogout}) {
   return(
-    <nav style={{ padding: '1rem', backgroundColor: '#2e072a', borderBottom: '1px solid #c68fe5', fontFamily: 'Arial, sans-serif' }}>
-      <Link style={{ color: '#ffffffe2', textDecoration: 'underline' }} to="/">Inicio</Link> |{' '}
-      <Link style={{ color: '#ffffffe2', textDecoration: 'underline' }} to="/centros">Centros</Link> |{' '}
-      <Link style={{ color: '#ffffffe2', textDecoration: 'underline' }} to="/intervenciones">Intervenciones</Link> 
-    </nav>
+      <nav className= "w-64 shrink-0 min-h-screen flex flex-col justify-center text-center bg-[#124045] text-white font-bold items-center gap-4 p-4">
+        <img 
+          src={logo} 
+          alt="Logo de la aplicación" 
+          className="w-24 h-24 rounded-full mt-4 mb-6 object-cover" 
+        />
+        <div className= "flex flex-col gap-4 w-full text-center">
+          <Link className=" bg-[#54867d] rounded-md w-50 h-10 flex-col justify-center items-center shadow-xl hover:bg-teal-300 transition-colors duration-200" to="/">Inicio</Link> {' '}
+          <Link className=" bg-[#54867d] rounded-md w-50 h-10 flex-col justify-center items-center shadow-xl hover:bg-teal-300 transition-colors duration-200" to="/centros">Centros</Link> {' '}
+          <Link className=" bg-[#54867d] rounded-md w-50 h-10 flex-col justify-center items-center shadow-xl hover:bg-teal-300 transition-colors duration-200" to="/intervenciones">Intervenciones</Link> 
+        </div>     
+        <button
+          onClick={onLogout}
+          className="mt-auto mb-4 w-full py-2.5 px-4 bg-red-600/80 hover:bg-red-600 text-white rounded-lg transition-colors text-center text-sm font-semibold shadow-md"
+        >
+          Cerrar Sesión
+        </button>
+      </nav>
   )
 }
  

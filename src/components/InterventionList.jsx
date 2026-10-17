@@ -6,8 +6,8 @@ import React from 'react';
 export function InterventionList() {
   return (
     <div>
-      <h1 style={{ color: '#dae157', fontWeight: 'bold', fontFamily: 'Arial, sans-serif' }}>Lista de Intervenciones</h1>
-      <p style ={{fontFamily: 'Comic Sans MS'}}>Bienvenido a la lista de intervenciones mamaguebo</p>
+      <h1 className= "text-black font-bold ">Lista de Intervenciones</h1>
+      <p className= "text-black">Bienvenido a la lista de intervenciones mamaguebo</p>
     </div>
   );
 }
