@@ -4,6 +4,7 @@
 
 const API_URL = import.meta.env.VITE_API_URL;
 
+
 export async function loginUSer(username, password) {
     const formData = new URLSearchParams();
     formData.append('username', username);
@@ -12,18 +13,18 @@ export async function loginUSer(username, password) {
     //Para comprobar problemas con la ruta en consola
     const fullUrl = `${API_URL}/token`;
     console.log("Intentando conectar a:", fullUrl);
-    
-    try{
+
+    try {
         const response = await fetch(`${API_URL}/token`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body:formData,
+            body: formData,
         });
 
-    //En caso de que haya algún error:
-    if (!response.ok) {
+        //En caso de que haya algún error:
+        if (!response.ok) {
             if (response.status === 401 || response.status === 400) {
                 throw new Error("Usuario o contraseña incorrectos.");
             }

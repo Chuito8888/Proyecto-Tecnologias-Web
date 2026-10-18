@@ -12,6 +12,7 @@ export function Login({ onLogginSucces }) {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    let variable = 0;
 
     const handleSubmit = async (e) => {
         //Por defecto no recargamos la página al enviar el formulario
@@ -37,6 +38,7 @@ export function Login({ onLogginSucces }) {
     };
 
     return (
+      
     <div className="min-h-screen flex items-center justify-center bg-[#0d2a2e] px-4">
       <div className="bg-[#124045] p-8 rounded-xl shadow-2xl w-full max-w-md text-white border border-[#1a555c]">
         <img 
