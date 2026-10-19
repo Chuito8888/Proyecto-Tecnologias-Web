@@ -5,7 +5,7 @@ import { getToken } from "./useAuth"; // Importa la función getToken desde useA
 const API_URL = import.meta.env.VITE_API_URL;
 const NumPags = 10;
 
-export function useInterventions() {
+export function useInterventions(initialSiteId = '') {
     //Para lista intervenciones
     const [interventions, setInterventions] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -92,6 +92,11 @@ useEffect(() => {
         .catch((err) => console.error("Error al obtener los sensores:", err));
 
 }, []);
+
+useEffect(() => {
+    if (!initialSiteId || sites.length === 0) return;
+    setForm((prevForm) => prevForm.siteId ? prevForm : { ...prevForm, siteId: String(initialSiteId) });
+}, [initialSiteId, sites]);
 
 const options = form.tipo === "centro" ? sites.map((site) => ({ value: site.id, label: site.name })) : sensors.map((sensor) => ({ value: sensor.id, label: `Sensor ${sensor.id} (Centro ${sensor.site_id})` }));
 
