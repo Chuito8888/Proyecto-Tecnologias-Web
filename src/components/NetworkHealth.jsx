@@ -13,7 +13,7 @@ export function NetworkHealth({ counts, totalSensors, totalCenters, loading }) {
   const porcentaje = totalSensors ? Math.round((counts.ok / totalSensors) * 100) : 0;
 
   return (
-    <section className="flex flex-col rounded-2xl bg-[#124045] p-5 text-white shadow-lg">
+    <section className=" flex flex-col rounded-2xl bg-[#124045] p-5 text-white shadow-xl">
       <h2 className="text-lg font-bold text-[#c8d1d9]">Estado de la red</h2>
 
       {/* Anillo con el porcentaje al centro */}

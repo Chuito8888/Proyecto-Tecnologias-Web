@@ -11,7 +11,7 @@ const Estados = [
 
 export function InterventionList({ interventions, loading, error, status, onStatusChange, page, hasNext, onPageChange, sites }) {
   return (
-    <section className="rounded-lg bg-slate-100 p-6 ">
+    <section className="rounded-lg bg-white p-6 ">
       <h2 className="text-black mb-4 text-2xl font-bold ">Historial de Intervenciones</h2>
       {/** botones de filtro por estado */}
       <div className="flex flex-wrap space-x- flex gap-3">
@@ -19,7 +19,7 @@ export function InterventionList({ interventions, loading, error, status, onStat
           <button
             key={estado.value}
             className={` rounded px-4 py-2 font-semibold transition-colors duration-300 ${status === estado.value
-              ? "bg-[#54867d] text-white"
+              ? "bg-[#54867d] text-white shadow-xl"
               : "bg-[#86b4a7] text-black hover:bg-#86b4a7-300"
               }`}
             onClick={() => onStatusChange(estado.value)}
@@ -37,7 +37,7 @@ export function InterventionList({ interventions, loading, error, status, onStat
       )}
 
       {/** tabla de intervenciones */}
-      <table className="w-full border-collapse border border-gray-300 rounded-lg">
+      <table className="w-full border-collapse border border-gray-300 rounded-lg shadow-lg">
         <thead>
           <tr className="bg-[#c8d1d9] ">
             <th className=" text-black border border-gray-300 px-4 py-2">Nombre</th>
@@ -71,7 +71,7 @@ export function InterventionList({ interventions, loading, error, status, onStat
         <button
           onClick={() => onPageChange(page - 1)}
           disabled={page === 1 || loading}
-          className="rounded bg-[#86b4a7] 200 px-4 py-2 font-semibold "
+          className="rounded bg-[#54867d] 200 px-4 py-2 font-semibold hover:bg-teal-300 transition-colors duration-200"
         >
           Anterior
         </button>
@@ -79,7 +79,7 @@ export function InterventionList({ interventions, loading, error, status, onStat
         <button
           onClick={() => onPageChange(page + 1)}
           disabled={!hasNext || loading}
-          className="rounded bg-[#86b4a7] 200 px-4 py-2 font-semibold "
+          className="rounded bg-[#54867d] 200 px-4 py-2 font-semibold hover:bg-teal-300 transition-colors duration-200 "
         >
           Siguiente
         </button>

@@ -1,7 +1,7 @@
 export function InterventionModal({ form, options, canSubmit, changeField, cancel, submit, formError, sending, ok }) {
     return (
-        <form onSubmit={submit} className="text-black rounded-lg bg-white p-6 ">
-            <h2 className="mb-4 text-black bg-[#54867d] ">Nueva Intervención</h2>
+        <form onSubmit={submit} className="text-black rounded-lg bg-white p-6 shadow-xl ">
+            <h2 className="mb-4 text-black font-bold ">Nueva Intervención</h2>
 
             {/* Centro o Sensor */}
             <label className="block font-semibold text-black">
@@ -17,7 +17,7 @@ export function InterventionModal({ form, options, canSubmit, changeField, cance
             </label>
 
             {/* Cuál centro o sensor */}
-            <label className="text-black mt-4 block font-semibold">
+            <label className="text-black mt-4 block font-semibold ">
                 {form.tipo === "centro" ? "Centro" : "Sensor"}
                 <select
                     value={form.siteId}
@@ -46,13 +46,13 @@ export function InterventionModal({ form, options, canSubmit, changeField, cance
             {ok && <p className="mt-3 text-green-600">Intervención abierta correctamente.</p>}
 
             <div className="mt-4 flex justify-end gap-2">
-                <button type="button" onClick={cancel} className="rounded bg-[#86b4a7] 200 px-4 py-2 font-semibold">
+                <button type="button" onClick={cancel} className="text-white rounded bg-red-400 200 px-4 py-2 font-semibold hover:bg-red-500 transition-colors duration-200">
                     Cancelar
                 </button>
                 <button
                     type="submit"
                     disabled={!canSubmit}
-                    className="rounded bg-[#54867d] 200 px-4 py-2 font-semibold"
+                    className="text-white rounded bg-[#54867d] 200 px-4 py-2 font-semibold hover:bg-teal-300 transition-colors duration-200"
                 >
                     {sending ? "Enviando…" : "Enviar"}
                 </button>

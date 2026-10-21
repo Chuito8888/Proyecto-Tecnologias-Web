@@ -38,9 +38,9 @@ return (
         {/* main ocupa todo el espacio restante (flex-1) a la derecha */}
         <main className="flex-1 p-8 text-white overflow-y-auto">
           <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/centros" element={<SitesPage />} />
-            <Route path="/intervenciones" element={<InterventionsPage />} />
+            <Route path="/" element={<HomePage />} /> {/*Contiene todo el dashboard*/}
+            <Route path="/centros" element={<SitesPage />} /> {/*Contiene todo lo relacionado a centros y sitios*/}
+            <Route path="/intervenciones" element={<InterventionsPage />} /> {/*Contiene todo lo relacionado a intervenciones*/}
           </Routes>
         </main>
       </div>
