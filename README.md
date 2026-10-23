@@ -14,18 +14,18 @@
 [![pnpm](https://img.shields.io/badge/pnpm-F69220?style=flat-square&logo=pnpm&logoColor=white)](https://pnpm.io)
 [![Licencia MIT](https://img.shields.io/badge/Licencia-MIT-124045?style=flat-square)](LICENSE)
 
-[Características](#-características) ·
-[Inicio rápido](#-inicio-rápido) ·
-[Configuración](#-configuración) ·
-[Arquitectura](#-arquitectura) ·
-[Tips](#-tips-y-solución-de-problemas) ·
-[Equipo](#-equipo)
+[Características](#características) ·
+[Inicio rápido](#inicio-rápido) ·
+[Configuración](#configuración) ·
+[Arquitectura](#arquitectura) ·
+[Tips](#tips-y-solución-de-problemas) ·
+[Equipo](#equipo)
 
 </div>
 
 ---
 
-## 📌 Sobre el proyecto
+## Sobre el proyecto
 
 En un centro de cultivo, el **oxígeno disuelto** es la variable que más rápido puede convertirse en una emergencia: si cae por debajo del mínimo seguro, los peces se estresan o mueren en cuestión de horas. **ULA Monitor** es un panel web que reúne las lecturas de los sensores instalados en jaulas y pontones, detecta lo que está fuera de rango o dejó de transmitir y lo pone **primero en pantalla**, para que el equipo de operaciones pueda reaccionar y registrar intervenciones sin perder tiempo.
 
@@ -35,7 +35,7 @@ Este es el **frontend** del sistema: una SPA en React que consume un backend RES
 
 ---
 
-## ✨ Características
+## Características
 
 | Ruta | Vista | Qué permite hacer |
 | --- | --- | --- |
@@ -44,12 +44,12 @@ Este es el **frontend** del sistema: una SPA en React que consume un backend RES
 | `/centros` | **Centros** | Buscar, filtrar y revisar el detalle de cada centro de cultivo. |
 | `/intervenciones` | **Intervenciones** | Consultar el historial y registrar nuevas intervenciones. |
 
-### 🔐 Inicio de sesión
+### Inicio de sesión
 
 - Formulario con validación, botón para **mostrar u ocultar la contraseña** y mensajes de error claros (credenciales incorrectas, servidor caído, etc.).
 - Si ya hay una sesión guardada en el navegador, la app entra directo al Dashboard.
 
-### 📊 Dashboard
+### Dashboard
 
 La pantalla principal está pensada como un **monitor en vivo**: se actualiza sola cada **60 segundos** (indicador `EN VIVO` + "Actualizado hace X") y además tiene un botón **Actualizar**.
 
@@ -60,24 +60,24 @@ La pantalla principal está pensada como un **monitor en vivo**: se actualiza so
 - **Perfil del centro**: cada jaula o pontón se dibuja como una **columna de agua** y sus sensores aparecen a la **profundidad real** donde están instalados, con el color de su estado. Así se ve de un vistazo si el problema está en la superficie o en el fondo.
 - **Gráfico de oxígeno**: mediciones de las últimas 24 h del sensor elegido, con la **franja del rango seguro** (mínimo y máximo) y un tooltip con fecha, hora y temperatura.
 
-### 🏭 Centros
+### Centros
 
 - Búsqueda por nombre y filtros: **Todos**, **Con problemas**, **Operativos** e **Inactivos**.
 - Tarjetas ordenadas para que los centros con problemas aparezcan arriba, con el conteo de sensores por estado.
 - Ventana de detalle con los sensores que requieren atención (incluida su profundidad) y un botón **Solicitar intervención** que lleva al formulario con el centro ya seleccionado.
 
-### 🛠️ Intervenciones
+### Intervenciones
 
 - Historial con filtro por estado (**Todas**, **Abiertas**, **Cerradas**) y paginación de 10 en 10.
 - Formulario **Nueva intervención** para registrarla sobre un centro completo o sobre un sensor específico.
 
-### 🚦 Estados de un sensor
+### Estados de un sensor
 
 | Estado | Color | Significado |
 | --- | --- | --- |
-| **Fuera de rango** | 🟡 Amarillo | La última lectura de oxígeno está fuera del rango seguro configurado para ese sensor. |
-| **Sin transmitir** | 🔴 Rojo | El sensor dejó de enviar datos. |
-| **Buen funcionamiento** | 🟢 Verde azulado | Transmite y su lectura está dentro del rango. |
+| **Fuera de rango** | Amarillo | La última lectura de oxígeno está fuera del rango seguro configurado para ese sensor. |
+| **Sin transmitir** | Rojo | El sensor dejó de enviar datos. |
+| **Buen funcionamiento** | Verde azulado | Transmite y su lectura está dentro del rango. |
 
 **Orden de criticidad** usado en el Dashboard:
 
@@ -87,7 +87,7 @@ La pantalla principal está pensada como un **monitor en vivo**: se actualiza so
 
 ---
 
-## 🧰 Stack tecnológico
+## Stack tecnológico
 
 | Tecnología | Versión | Uso en el proyecto |
 | --- | --- | --- |
@@ -105,7 +105,7 @@ La pantalla principal está pensada como un **monitor en vivo**: se actualiza so
 
 ---
 
-## ✅ Requisitos previos
+## Requisitos previos
 
 | Herramienta | Versión mínima | Cómo verificar |
 | --- | --- | --- |
@@ -125,7 +125,7 @@ npm install -g pnpm
 
 ---
 
-## 🚀 Inicio rápido
+## Inicio rápido
 
 **1. Clonar el repositorio**
 
@@ -142,7 +142,7 @@ pnpm install
 
 **3. Configurar las variables de entorno**
 
-Crea un archivo `.env` en la raíz del proyecto (ver [Configuración](#-configuración)):
+Crea un archivo `.env` en la raíz del proyecto (ver [Configuración](#configuración)):
 
 ```env
 VITE_API_URL=https://tu-servidor.ejemplo.com
@@ -158,20 +158,20 @@ Abre **http://localhost:5173** en el navegador e inicia sesión con tus credenci
 
 ---
 
-## 🔧 Configuración
+## Configuración
 
 La app se configura con variables de entorno que Vite lee al arrancar. Solo las que empiezan con `VITE_` quedan disponibles en el navegador.
 
 | Variable | Obligatoria | Descripción | Ejemplo |
 | --- | :---: | --- | --- |
-| `VITE_API_URL` | ✅ | URL base del backend, **sin** `/` al final. | `https://tu-servidor.ejemplo.com` |
+| `VITE_API_URL` | Sí | URL base del backend, **sin** `/` al final. | `https://tu-servidor.ejemplo.com` |
 
 > [!IMPORTANT]
 > El archivo `.env` está en `.gitignore` y **nunca debe subirse al repositorio**. Ten en cuenta también que todo lo que empieza con `VITE_` se incrusta en el JavaScript final y cualquiera puede verlo en el navegador: úsalo para URLs públicas, **jamás** para contraseñas, llaves o tokens.
 
 ---
 
-## 📜 Scripts disponibles
+## Scripts disponibles
 
 | Comando | Descripción |
 | --- | --- |
@@ -182,7 +182,7 @@ La app se configura con variables de entorno que Vite lee al arrancar. Solo las 
 
 ---
 
-## 🧱 Arquitectura
+## Arquitectura
 
 ```mermaid
 flowchart LR
@@ -212,7 +212,7 @@ El código se organiza en capas con responsabilidades claras:
 
 ---
 
-## 📁 Estructura del proyecto
+## Estructura del proyecto
 
 ```text
 Proyecto-Tecnologias-Web/
@@ -250,7 +250,7 @@ Proyecto-Tecnologias-Web/
 
 ---
 
-## 💡 Tips y solución de problemas
+## Tips y solución de problemas
 
 <details>
 <summary><b>Windows: "pnpm no se reconoce" o "la ejecución de scripts está deshabilitada"</b></summary>
@@ -339,7 +339,7 @@ La app usa rutas del lado del cliente (`BrowserRouter`). Al publicarla, configur
 
 ---
 
-## 🎨 Paleta de colores
+## Paleta de colores
 
 La interfaz sigue el diseño acordado en Canva, con tonos inspirados en el agua de mar:
 
@@ -354,7 +354,7 @@ La interfaz sigue el diseño acordado en Canva, con tonos inspirados en el agua 
 
 ---
 
-## 👥 Equipo
+## Equipo
 
 - **Jesús Minnitti**
 - **Triana Bravo**
@@ -363,10 +363,10 @@ La interfaz sigue el diseño acordado en Canva, con tonos inspirados en el agua 
 
 ---
 
-## 📄 Licencia
+## Licencia
 
 Distribuido bajo la licencia **MIT**. Consulta el archivo [`LICENSE`](LICENSE) para más detalles.
 
 <div align="center">
-<sub>Hecho con 💙 en Chile · ULA Monitor © 2026</sub>
+<sub>Hecho en Chile · ULA Monitor © 2026</sub>
 </div>
