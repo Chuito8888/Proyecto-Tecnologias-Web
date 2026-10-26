@@ -1,5 +1,84 @@
 @import "tailwindcss";
 
+/* Paleta del proyecto: se usa como bg-brand-dark, text-brand, border-brand-light, etc. */
+@theme {
+  --color-brand-dark: #124045;
+  --color-brand: #54867d;
+  --color-brand-light: #86b4a7;
+  --color-brand-gray: #c8d1d9;
+  --color-surface: #eceeed;
+  --color-danger: #dc2626;
+  --color-danger-dark: #b91c1c;
+}
+
+/* Pantallas de poca altura (ej. proyector 800x600). Se usa como bajo:p-2 */
+@custom-variant bajo (@media (max-height: 640px));
+
 body {
-  @apply bg-[#c8d1d9];
+  @apply bg-brand-gray;
+}
+
+/* Componentes reutilizables para que botones, tarjetas y formularios sigan una misma estructura */
+@layer components {
+  /* Botones: misma altura, radio, peso y foco en toda la app */
+  .btn {
+    @apply inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-lg px-4 text-sm font-semibold whitespace-nowrap shadow-sm transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-light focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-sm {
+    @apply h-8 px-3 text-xs;
+  }
+  .btn-primary {
+    @apply bg-brand text-white hover:bg-brand-dark disabled:hover:bg-brand;
+  }
+  .btn-secondary {
+    @apply border border-brand-light bg-white text-brand-dark hover:bg-surface disabled:hover:bg-white;
+  }
+  .btn-danger {
+    @apply bg-danger text-white hover:bg-danger-dark disabled:hover:bg-danger;
+  }
+  .btn-ghost {
+    @apply bg-transparent text-brand-dark shadow-none hover:bg-brand-gray/60;
+  }
+
+  /* Tarjetas de contenido */
+  .card {
+    @apply rounded-2xl bg-surface p-5 shadow-lg;
+  }
+  .card-title {
+    @apply text-xl font-bold text-brand-dark;
+  }
+
+  /* Campos de formulario */
+  .field-label {
+    @apply block text-sm font-semibold text-brand-dark;
+  }
+  .input {
+    @apply mt-1 h-10 w-full rounded-lg border border-brand-light bg-white px-3 text-sm text-brand-dark outline-none transition focus:border-brand focus:ring-2 focus:ring-brand-light/60;
+  }
+  .input-error {
+    @apply border-danger focus:border-danger focus:ring-danger/30;
+  }
+  .field-error {
+    @apply mt-1 flex items-center gap-1 text-xs font-medium text-danger;
+  }
+
+  /* Avisos de estado */
+  .alert-error {
+    @apply rounded-lg border border-red-300 bg-red-50 p-3 text-sm font-medium text-red-700;
+  }
+  .alert-success {
+    @apply rounded-lg border border-emerald-300 bg-emerald-50 p-3 text-sm font-medium text-emerald-700;
+  }
+}
+
+/* Proyector (800x600 o menos alto): tarjetas y títulos algo más compactos. No aplica en >=1024px de ancho con >640px de alto */
+@layer components {
+  @media (max-width: 1023.98px), (max-height: 640px) {
+    .card {
+      @apply p-4;
+    }
+    .card-title {
+      @apply text-lg;
+    }
+  }
 }
