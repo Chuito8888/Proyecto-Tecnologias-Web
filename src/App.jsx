@@ -32,11 +32,12 @@ export function App() {
 
 return (
     <BrowserRouter>
-      <div className="flex min-h-screen">
+      {/* La barra lateral queda fija y solo el contenido (main) hace scroll */}
+      <div className="flex h-dvh overflow-hidden">
         <NavegationBar onLogout={handleLogout} />
-        
-        {/* main ocupa todo el espacio restante (flex-1) a la derecha */}
-        <main className="flex-1 p-8 text-white overflow-y-auto">
+
+        {/* main ocupa todo el espacio restante (flex-1) a la derecha; padding menor en proyector */}
+        <main className="min-w-0 flex-1 overflow-y-auto p-4 text-white md:p-6 lg:p-8 max-lg:p-4! bajo:p-4!">
           <Routes>
             <Route path="/" element={<HomePage />} /> {/*Contiene todo el dashboard*/}
             <Route path="/centros" element={<SitesPage />} /> {/*Contiene todo lo relacionado a centros y sitios*/}
