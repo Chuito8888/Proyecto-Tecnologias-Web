@@ -7,6 +7,19 @@ import { getToken } from "./useAuth";
 const API_URL = import.meta.env.VITE_API_URL;
 const REFRESCO_MS = 60000; // El Dashboard se recarga solo cada 1 minuto, como un monitor en vivo
 
+//Límites del motivo de una intervención (los mismos que valida el formulario de alertas)
+export const MOTIVO_MIN = 10;
+export const MOTIVO_MAX = 500;
+
+//Revisa el motivo y devuelve el mensaje de error, o null si está bien
+export function validarMotivo(motivo) {
+    const texto = (motivo ?? '').trim();
+    if (!texto) return 'Escribe el motivo de la intervención.';
+    if (texto.length < MOTIVO_MIN) return `El motivo debe tener al menos ${MOTIVO_MIN} caracteres (llevas ${texto.length}).`;
+    if (texto.length > MOTIVO_MAX) return `El motivo no puede superar los ${MOTIVO_MAX} caracteres.`;
+    return null;
+}
+
 //Helper para llamar a la API con el token
 async function apiFetch(ruta, opciones = {}) {
     const response = await fetch(`${API_URL}${ruta}`, {
@@ -75,6 +88,7 @@ export function useDashboard() {
     const [error, setError] = useState(null);
     const [updatedAt, setUpdatedAt] = useState(null);
     const [reload, setReload] = useState(0);
+    const [refreshing, setRefreshing] = useState(false); // true mientras corre una recarga pedida con el botón Actualizar
 
     //Para el gráfico: se guarda a qué sensor pertenecen los puntos para saber si siguen cargando
     const [selectedId, setSelectedId] = useState(null);
@@ -149,7 +163,10 @@ export function useDashboard() {
             } catch (err) {
                 if (!cancelado) setError(err.message);
             } finally {
-                if (!cancelado) setLoading(false);
+                if (!cancelado) {
+                    setLoading(false);
+                    setRefreshing(false);
+                }
             }
         }
 
@@ -220,6 +237,10 @@ export function useDashboard() {
 
     //Abre una intervención desde el panel de alertas y recarga el Dashboard
     const openIntervention = async (alerta, motivo) => {
+        //Se vuelve a validar aquí para no mandar a la API un motivo inválido
+        const errorMotivo = validarMotivo(motivo);
+        if (errorMotivo) throw new Error(errorMotivo);
+
         const response = await fetch(`${API_URL}/interventions`, {
             method: "POST",
             headers: {
@@ -229,9 +250,12 @@ export function useDashboard() {
             body: JSON.stringify({
                 site_id: alerta.siteId,
                 sensor_id: alerta.sensorId,
-                reason: motivo,
+                reason: motivo.trim(),
             }),
         });
+        if (response.status === 401) {
+            throw new Error("Tu sesión expiró, vuelve a iniciar sesión.");
+        }
         if (!response.ok) {
             throw new Error("No se pudo abrir la intervención. Inténtalo de nuevo.");
         }
@@ -239,12 +263,16 @@ export function useDashboard() {
     };
 
     return {
-        counts, loading, error, updatedAt,
+        counts, loading, error, updatedAt, refreshing,
         alerts: sensors.filter((s) => s.status !== 'ok'),
         sensors, selected, setSelectedId, points, chartLoading, trends,
         centers, selectedCenter, selectCenter,
         recentInterventions,
         openIntervention,
-        refresh: () => setReload((prev) => prev + 1),
+        //Recarga manual: marca "actualizando" para girar el ícono y bloquear el botón
+        refresh: () => {
+            setRefreshing(true);
+            setReload((prev) => prev + 1);
+        },
     };
 }
