@@ -1,5 +1,5 @@
 //consulta centros y sensores para construir el estado de cada centro
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { getToken } from './useAuth';
 
 const API_URL = import.meta.env.VITE_API_URL?.replace(/\/+$/, '');
@@ -8,6 +8,14 @@ export function useSites() {
 	const [sites, setSites] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
+	//al cambiar este contador se vuelve a consultar (botón "Reintentar")
+	const [intento, setIntento] = useState(0);
+
+	const reload = useCallback(() => {
+		setLoading(true);
+		setError(null);
+		setIntento((n) => n + 1);
+	}, []);
 
 	useEffect(() => {
 		let cancelado = false;
@@ -31,11 +39,11 @@ export function useSites() {
 				if (cancelado) return;
 
 				const sensoresPorCentro = {};
-				sensorsJson.data.forEach((sensor) => {
+				(sensorsJson.data ?? []).forEach((sensor) => {
 					(sensoresPorCentro[sensor.site_id] ??= []).push(sensor);
 				});
 
-				setSites(sitesJson.data.map((site) => {
+				setSites((sitesJson.data ?? []).map((site) => {
 					const sensors = sensoresPorCentro[site.id] ?? [];
 					const outOfRange = sensors.filter((sensor) => sensor.status === 'out_of_range').length;
 					const noData = sensors.filter((sensor) => sensor.status === 'no_data').length;
@@ -52,7 +60,12 @@ export function useSites() {
 				}));
 				setError(null);
 			} catch (err) {
-				if (!cancelado) setError(err.message);
+				//un fallo de red (fetch rechazado) se muestra con un mensaje entendible
+				if (!cancelado) {
+					setError(err instanceof TypeError
+						? 'No se pudo conectar con el servidor. Revisa tu conexión e inténtalo de nuevo.'
+						: err.message);
+				}
 			} finally {
 				if (!cancelado) setLoading(false);
 			}
@@ -60,7 +73,7 @@ export function useSites() {
 
 		cargar();
 		return () => { cancelado = true; };
-	}, []);
+	}, [intento]);
 
-	return { sites, loading, error };
+	return { sites, loading, error, reload };
 }
