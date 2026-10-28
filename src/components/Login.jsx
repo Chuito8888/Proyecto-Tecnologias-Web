@@ -69,12 +69,10 @@ export function Login({ onLogginSucces }) {
     }, [error, loading]);
 
     const handleSubmit = async (e) => {
-        //Por defecto no recargamos la página al enviar el formulario
         e.preventDefault();
         if (loading) return;
         setError('');
 
-        //Validación propia: si falta algún campo se marca en rojo y no se llama a la API
         const nuevosErrores = validar(username, password);
         setErrores(nuevosErrores);
         if (nuevosErrores.username) {
@@ -86,17 +84,13 @@ export function Login({ onLogginSucces }) {
             return;
         }
 
-        //Se activa el estado de cargando
         setLoading(true);
         try {
-            //Se llama a la función de loginUSer (hook de autenticación) para autenticar al usuario
             await loginUSer(username.trim(), password);
 
-            //Si sale bien, joya
             if(onLogginSucces) {
                 onLogginSucces();
             }
-            //Si no sale bien, se captura el error y se muestra en pantalla, se deja de cargar la página
         } catch (err) {
             setError(err.message);
         } finally {
@@ -104,7 +98,6 @@ export function Login({ onLogginSucces }) {
         }
     };
 
-    //Al escribir en un campo se quita su mensaje de error
     const cambiarUsuario = (e) => {
         setUsername(e.target.value);
         if (errores.username) setErrores((prev) => ({ ...prev, username: undefined }));
@@ -114,35 +107,32 @@ export function Login({ onLogginSucces }) {
         if (errores.password) setErrores((prev) => ({ ...prev, password: undefined }));
     };
 
-    //Estilo base de los campos tipo "píldora" del Canva; en rojo cuando tienen error
     const claseCampo = (conError) =>
-        `h-12 w-full rounded-full bg-brand/80 text-white placeholder-brand-gray/90 outline-none transition focus:bg-brand focus:ring-2 disabled:opacity-70 ${
+        `h-12 w-full rounded-full bg-brand/80 text-white font-bold tracking-wider placeholder-brand-gray/90 outline-none transition focus:bg-brand focus:ring-2 disabled:opacity-70 ${
             conError ? 'ring-2 ring-red-400 focus:ring-red-300' : 'focus:ring-brand-light'
         }`;
 
     return (
     <div className="relative min-h-screen overflow-hidden bg-brand-dark px-6 text-brand-gray">
-      {/* Círculos decorativos de fondo, en los mismos tonos del proyecto */}
+      {/* Círculos decorativos de fondo */}
       <div className="pointer-events-none absolute -left-32 -top-32 h-96 w-96 rounded-full bg-brand/20" />
       <div className="pointer-events-none absolute -bottom-40 -right-24 h-[28rem] w-[28rem] rounded-full bg-brand-light/10" />
 
       <div className="relative mx-auto flex min-h-screen max-w-5xl flex-col items-center justify-center gap-10 py-10 lg:flex-row lg:gap-20 sm:max-lg:flex-row sm:max-lg:gap-10 sm:max-lg:py-6 bajo:gap-8 bajo:py-4">
-        {/* En proyector (800px de ancho o poca altura) portada y formulario van en fila para caber sin scroll */}
-
-        {/* Portada: logo grande como en la primera página del Canva */}
+        {/* Portada */}
         <div className="flex flex-col items-center text-center sm:max-lg:w-72 sm:max-lg:shrink-0">
           <img
             src={logo}
             alt="Logo de ULA Monitor"
             className="h-40 w-40 rounded-full object-cover shadow-2xl ring-8 ring-brand-gray/20 lg:h-64 lg:w-64 [@media(max-height:520px)]:h-32 [@media(max-height:520px)]:w-32 bajo:ring-4"
           />
-          <h1 className="mt-6 text-4xl font-extrabold tracking-wide md:text-5xl max-lg:text-4xl! bajo:mt-4 [@media(max-height:520px)]:text-3xl!">ULA MONITOR</h1>
+          <h1 className="mt-6 text-4xl font-bold tracking-wide md:text-5xl max-lg:text-4xl! bajo:mt-4 [@media(max-height:520px)]:text-3xl!">ULA MONITOR</h1>
           <p className="mt-2 max-w-xs text-brand-light sm:max-lg:max-w-60 bajo:text-sm">
             Monitoreo de oxígeno disuelto en centros de cultivo
           </p>
         </div>
 
-        {/* Formulario: "USER LOGIN" del Canva. noValidate: usamos nuestra propia validación */}
+        {/* Formulario */}
         <form onSubmit={handleSubmit} noValidate className="flex w-full max-w-sm flex-col gap-6 bajo:gap-4">
           <div className="text-center lg:text-left sm:max-lg:text-left">
             <h2 className="text-3xl font-extrabold tracking-wider bajo:text-2xl">INICIAR SESIÓN</h2>
@@ -156,7 +146,7 @@ export function Login({ onLogginSucces }) {
             </div>
           )}
 
-          {/* Usuario: ícono a la izquierda, como en el Canva */}
+          {/* Usuario: ícono a la izquierda */}
           <div>
             <label htmlFor="login-usuario" className="sr-only">Usuario</label>
             <div className="relative">
@@ -167,6 +157,7 @@ export function Login({ onLogginSucces }) {
                 ref={usuarioRef}
                 id="login-usuario"
                 type="text"
+                maxlength={25}
                 autoComplete="username"
                 value={username}
                 onChange={cambiarUsuario}
@@ -186,13 +177,17 @@ export function Login({ onLogginSucces }) {
             )}
           </div>
 
-          {/* Contraseña: candado a la derecha, como en el Canva, y botón para mostrarla */}
+          {/* Contraseña: ícono de candado a la izquierda, input con padding a ambos lados y botón de ver contraseña a la derecha */}
           <div>
             <label htmlFor="login-password" className="sr-only">Contraseña</label>
             <div className="relative">
+              <span className="pointer-events-none absolute left-0 top-1/2 flex h-14 w-14 -translate-y-1/2 items-center justify-center rounded-full bg-brand-gray text-brand-dark shadow-md">
+                <IconoCandado />
+              </span>
               <input
                 ref={passwordRef}
                 id="login-password"
+                maxlength={25}
                 type={verPassword ? 'text' : 'password'}
                 autoComplete="current-password"
                 value={password}
@@ -202,23 +197,20 @@ export function Login({ onLogginSucces }) {
                 aria-required="true"
                 aria-invalid={Boolean(errores.password)}
                 aria-describedby={errores.password ? 'login-password-error' : undefined}
-                className={`${claseCampo(errores.password)} pl-5 pr-28`}
+                className={`${claseCampo(errores.password)} pl-[4.5rem] pr-14`}
               />
               <button
                 type="button"
                 onClick={() => setVerPassword((v) => !v)}
-                className="absolute right-16 top-1/2 -translate-y-1/2 cursor-pointer rounded-full p-1.5 text-brand-gray transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-light"
+                className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer rounded-full p-2 text-brand-gray transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-light"
                 aria-label={verPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
                 aria-pressed={verPassword}
               >
                 <IconoOjo tachado={verPassword} />
               </button>
-              <span className="pointer-events-none absolute right-0 top-1/2 flex h-14 w-14 -translate-y-1/2 items-center justify-center rounded-full bg-brand-gray text-brand-dark shadow-md">
-                <IconoCandado />
-              </span>
             </div>
             {errores.password && (
-              <p id="login-password-error" className="mt-2 flex items-center gap-1.5 pl-5 text-sm font-medium text-red-200">
+              <p id="login-password-error" className="mt-2 flex items-center gap-1.5 pl-[4.5rem] text-sm font-medium text-red-200">
                 <IconoAlerta />
                 {errores.password}
               </p>

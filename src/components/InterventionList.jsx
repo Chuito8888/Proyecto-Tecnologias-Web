@@ -1,22 +1,22 @@
-//"Listar intervenciones con filtro por estado"
-//Muestra un historial de las intervenciones, permitiendo también filtrarlas por estado
+// "Listar intervenciones con filtro por estado"
+// Muestra un historial de las intervenciones, permitiendo también filtrarlas por estado
 
 import { timeAgo } from '../utils/format';
 
-//Botones de filtro por estado
+// Botones de filtro por estado
 const Estados = [
   { label: "Todas", value: "" },
   { label: "Abiertas", value: "open" },
   { label: "Cerradas", value: "closed" },
 ];
 
-//Insignia de color para cada estado
+// Insignia de color para cada estado
 const Insignias = {
   open: { label: "Abierta", clase: "bg-amber-100 text-amber-800 ring-amber-300" },
   closed: { label: "Cerrada", clase: "bg-emerald-100 text-emerald-800 ring-emerald-300" },
 };
 
-//La API manda fechas en hora de Chile, ej: "2026-10-18T14:05:00" -> "18-10-2026 14:05"
+// La API manda fechas en hora de Chile, ej: "2026-10-18T14:05:00" -> "18-10-2026 14:05"
 function fechaLegible(fecha) {
   if (!fecha) return '—';
   const [dia, hora = ''] = fecha.split('T');
@@ -62,7 +62,6 @@ export function InterventionList({ interventions, loading, error, status, onStat
       {!loading && error && <div className="alert-error" role="alert">{error}</div>}
       {vacia && (
         <div className="rounded-xl border border-dashed border-brand-light bg-white/60 py-12 text-center text-sm text-gray-500">
-          {/* En páginas posteriores a la primera no se dice que no hay registros */}
           {page > 1
             ? 'No hay más intervenciones en esta página.'
             : status === 'open'
@@ -73,17 +72,17 @@ export function InterventionList({ interventions, loading, error, status, onStat
         </div>
       )}
 
-      {/* Tabla de intervenciones */}
+      {/* Tabla de intervenciones optimizada para evitar scroll horizontal */}
       {hayDatos && (
         <div className="overflow-x-auto rounded-lg border border-brand-gray bg-white">
-          {/* En proyector la tabla se ajusta al ancho en vez de forzar 640px */}
-          <table className="w-full min-w-[640px] text-left text-sm max-lg:min-w-0 max-lg:table-fixed">
+          <table className="w-full text-left text-sm table-fixed">
             <thead className="bg-surface text-xs font-semibold uppercase tracking-wide text-gray-600">
               <tr>
-                <th scope="col" className="px-4 py-3 max-lg:w-[28%] max-lg:px-3 max-lg:py-2">Centro / Sensor</th>
-                <th scope="col" className="px-4 py-3 max-lg:w-34 max-lg:px-3 max-lg:py-2">Fecha</th>
-                <th scope="col" className="px-4 py-3 max-lg:px-3 max-lg:py-2">Motivo</th>
-                <th scope="col" className="px-4 py-3 text-center max-lg:w-24 max-lg:px-2 max-lg:py-2">Estado</th>
+                {/* Definimos porcentajes de ancho fijos para cada columna */}
+                <th scope="col" className="w-[24%] px-3 py-3">Centro / Sensor</th>
+                <th scope="col" className="w-[22%] px-3 py-3">Fecha</th>
+                <th scope="col" className="w-[38%] px-3 py-3">Motivo</th>
+                <th scope="col" className="w-[16%] px-2 py-3 text-center">Estado</th>
               </tr>
             </thead>
 
@@ -92,21 +91,30 @@ export function InterventionList({ interventions, loading, error, status, onStat
                 const insignia = Insignias[intervention.status] ?? { label: intervention.status, clase: "bg-gray-100 text-gray-700 ring-gray-300" };
                 return (
                   <tr key={intervention.id} className="align-top transition-colors odd:bg-white even:bg-surface/50 hover:bg-brand-light/15">
-                    <td className="px-4 py-3 max-lg:px-3 max-lg:py-2">
-                      <div className="font-semibold">
+                    {/* Centro y sensor con texto adaptado */}
+                    <td className="px-3 py-3 break-words">
+                      <div className="font-semibold text-xs sm:text-sm">
                         {sites.find((s) => s.id === intervention.site_id)?.name ?? `Centro ${intervention.site_id}`}
                       </div>
                       {intervention.sensor_id && (
-                        <div className="text-xs text-gray-500">Sensor {intervention.sensor_id}</div>
+                        <div className="text-[11px] sm:text-xs text-gray-500">Sensor {intervention.sensor_id}</div>
                       )}
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 max-lg:px-3 max-lg:py-2">
-                      <div>{fechaLegible(intervention.created_at)}</div>
-                      <div className="text-xs text-gray-500">{timeAgo(intervention.created_at)}</div>
+
+                    {/* Fecha compactada para que no gaste espacio de más */}
+                    <td className="px-3 py-3 whitespace-nowrap">
+                      <div className="text-xs sm:text-sm">{fechaLegible(intervention.created_at)}</div>
+                      <div className="text-[11px] sm:text-xs text-gray-500">{timeAgo(intervention.created_at)}</div>
                     </td>
-                    <td className="max-w-md px-4 py-3 break-words text-gray-700 max-lg:px-3 max-lg:py-2">{intervention.reason}</td>
-                    <td className="px-4 py-3 text-center max-lg:px-2 max-lg:py-2">
-                      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 ring-inset ${insignia.clase}`}>
+
+                    {/* Motivo con ajuste de línea fluido */}
+                    <td className="px-3 py-3 break-words text-xs sm:text-sm text-gray-700">
+                      <span className="line-clamp-3">{intervention.reason}</span>
+                    </td>
+
+                    {/* Estado con espacio reservado garantizado */}
+                    <td className="px-2 py-3 text-center align-middle">
+                      <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] sm:text-xs font-semibold ring-1 ring-inset ${insignia.clase}`}>
                         {insignia.label}
                       </span>
                     </td>

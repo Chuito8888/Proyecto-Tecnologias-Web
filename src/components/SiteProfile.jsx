@@ -3,6 +3,8 @@
 //Así se ve de un vistazo si el problema está en la superficie o en el fondo
 //Al tocar un sensor se muestra su gráfico
 
+//NOTA: por ahora esta sección está comentada en el dashboard, por lo que aunque no se use el componente queda ahí para implementarse
+
 import React from 'react';
 import { formatOxygen, ESTADOS_SENSOR, MENSAJE_SIN_DATOS } from '../utils/format';
 

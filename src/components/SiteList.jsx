@@ -61,15 +61,28 @@ function plural(n, singular, pluralTexto) {
   return n === 1 ? singular : pluralTexto;
 }
 
-//Panel modal con el detalle del centro: se cierra con Escape, con la X o haciendo clic fuera
+// Panel modal con el detalle del centro: se cierra con Escape o haciendo clic fuera
 function DetalleCentro({ site, onClose, onSolicitar }) {
   const cerrarRef = useRef(null);
   const panelRef = useRef(null);
-  const sensoresConProblemas = site.sensors.filter((sensor) => sensor.status !== 'ok');
   const conProblemas = site.problemCount > 0;
 
+  // Mapeo de prioridad para ordenar: primero sin transmitir, luego fuera de rango, y al final los operativos
+  const PRIORIDAD_ESTADO = {
+    no_data: 1,
+    out_of_range: 2,
+    ok: 3,
+  };
+
+  // Ordenamos todos los sensores del centro manteniendo la jerarquía requerida
+  const todosLosSensores = [...(site.sensors || [])].sort((a, b) => {
+    const prioA = PRIORIDAD_ESTADO[a.status] ?? 99;
+    const prioB = PRIORIDAD_ESTADO[b.status] ?? 99;
+    if (prioA !== prioB) return prioA - prioB;
+    return (a.sensor_name || '').localeCompare(b.sensor_name || '', 'es');
+  });
+
   useEffect(() => {
-    //foco inicial en el botón de cerrar y bloqueo del scroll de fondo
     const focoAnterior = document.activeElement;
     cerrarRef.current?.focus();
     const overflowAnterior = document.body.style.overflow;
@@ -80,7 +93,6 @@ function DetalleCentro({ site, onClose, onSolicitar }) {
         onClose();
         return;
       }
-      //el foco con Tab queda atrapado dentro del panel mientras esté abierto
       if (event.key !== 'Tab' || !panelRef.current) return;
       const enfocables = Array.from(panelRef.current.querySelectorAll(
         'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
@@ -102,7 +114,6 @@ function DetalleCentro({ site, onClose, onSolicitar }) {
     return () => {
       document.removeEventListener('keydown', alPresionar);
       document.body.style.overflow = overflowAnterior;
-      //devolvemos el foco a la tarjeta que abrió el panel
       if (focoAnterior instanceof HTMLElement) focoAnterior.focus();
     };
   }, [onClose]);
@@ -120,23 +131,13 @@ function DetalleCentro({ site, onClose, onSolicitar }) {
         className="flex max-h-[90vh] w-full max-w-2xl flex-col bajo:max-h-[calc(100vh-1rem)] overflow-hidden rounded-2xl bg-surface text-black shadow-2xl"
         onClick={(event) => event.stopPropagation()}
       >
-        {/* Encabezado fijo del panel */}
+        {/* Encabezado fijo del panel (sin botón X) */}
         <div className="flex items-start justify-between gap-4 border-b border-brand-gray px-6 pb-4 pt-6 max-lg:px-5 bajo:pb-3 bajo:pt-4">
           <div className="min-w-0">
             <p className="text-xs font-bold uppercase tracking-wider text-brand">Detalle del centro</p>
             <h2 id="detalle-centro-titulo" className="mt-1 break-words text-2xl font-bold text-brand-dark sm:text-3xl max-lg:text-2xl! bajo:mt-0 bajo:text-xl!">{site.name}</h2>
             <p className="text-sm text-gray-600">{site.area || 'Área no informada'}</p>
           </div>
-          <button
-            ref={cerrarRef}
-            type="button"
-            onClick={onClose}
-            aria-label="Cerrar detalle del centro"
-            title="Cerrar (Esc)"
-            className="btn btn-ghost h-10 w-10 shrink-0 px-0"
-          >
-            <IconoCerrar className="h-5 w-5" />
-          </button>
         </div>
 
         {/* Contenido desplazable */}
@@ -155,37 +156,47 @@ function DetalleCentro({ site, onClose, onSolicitar }) {
             <div className="alert-success">No hay problemas críticos registrados en este centro.</div>
           )}
 
+          {/* Cuadritos condicionales ordenados: Operativos -> Fuera de rango -> Sin transmitir */}
           <div className="mt-5 grid grid-cols-3 gap-2 text-center bajo:mt-3">
-            <div className={`rounded-xl p-3 bajo:py-2 ${COLORES.out_of_range.chip}`}>
-              <strong className="block text-2xl">{site.outOfRange}</strong>
-              <span className="text-xs font-bold">Fuera de rango</span>
-            </div>
-            <div className={`rounded-xl p-3 bajo:py-2 ${COLORES.no_data.chip}`}>
-              <strong className="block text-2xl">{site.noData}</strong>
-              <span className="text-xs font-bold">Sin transmitir</span>
-            </div>
-            <div className="rounded-xl bg-brand-gray p-3 text-brand-dark bajo:py-2">
-              <strong className="block text-2xl">{site.ok}</strong>
-              <span className="text-xs font-bold">Operativos</span>
-            </div>
+            {site.ok > 0 && (
+              <div className="rounded-xl bg-brand-gray p-3 text-brand-dark bajo:py-2">
+                <strong className="block text-2xl">{site.ok}</strong>
+                <span className="text-xs font-bold">Operativos</span>
+              </div>
+            )}
+            {site.outOfRange > 0 && (
+              <div className={`rounded-xl p-3 bajo:py-2 ${COLORES.out_of_range.chip}`}>
+                <strong className="block text-2xl">{site.outOfRange}</strong>
+                <span className="text-xs font-bold">Fuera de rango</span>
+              </div>
+            )}
+            {site.noData > 0 && (
+              <div className={`rounded-xl p-3 bajo:py-2 ${COLORES.no_data.chip}`}>
+                <strong className="block text-2xl">{site.noData}</strong>
+                <span className="text-xs font-bold">Sin transmitir</span>
+              </div>
+            )}
           </div>
 
           <div className="mt-6 bajo:mt-4">
-            <h3 className="text-lg font-bold text-brand-dark">Sensores que requieren atención</h3>
-            {sensoresConProblemas.length > 0 ? (
+            <h3 className="text-lg font-bold text-brand-dark">Sensores del centro</h3>
+            {todosLosSensores.length > 0 ? (
               <ul className="mt-3 flex flex-col gap-2">
-                {sensoresConProblemas.map((sensor) => {
-                  const estado = ESTADOS_SENSOR[sensor.status];
+                {todosLosSensores.map((sensor) => {
+                  const estado = ESTADOS_SENSOR[sensor.status] || {
+                    label: 'Operativo',
+                    clase: 'bg-emerald-100 text-emerald-800 border border-emerald-300',
+                  };
                   return (
-                    <li key={sensor.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-red-200 bg-white p-3">
+                    <li key={sensor.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white p-3">
                       <div>
                         <p className="font-bold text-brand-dark">{sensor.sensor_name || `Sensor ${sensor.id}`}</p>
                         <p className="text-sm text-gray-600">
                           Profundidad: {sensor.depth != null ? `${sensor.depth} m` : 'No informada'}
                         </p>
                       </div>
-                      <span className={`rounded-full px-3 py-1 text-xs font-bold ${estado?.clase ?? 'bg-danger text-white'}`}>
-                        {estado?.label ?? 'Con problemas'}
+                      <span className={`rounded-full px-3 py-1 text-xs font-bold ${estado.clase}`}>
+                        {estado.label}
                       </span>
                     </li>
                   );
@@ -193,7 +204,7 @@ function DetalleCentro({ site, onClose, onSolicitar }) {
               </ul>
             ) : (
               <p className="mt-3 rounded-xl bg-white p-4 text-sm text-gray-600">
-                {site.sensors.length === 0 ? 'Este centro no tiene sensores registrados.' : 'Todos los sensores están operativos.'}
+                Este centro no tiene sensores registrados.
               </p>
             )}
           </div>
@@ -201,7 +212,7 @@ function DetalleCentro({ site, onClose, onSolicitar }) {
 
         {/* Acciones fijas al pie del panel */}
         <div className="flex flex-col-reverse gap-2 border-t border-brand-gray bg-surface px-6 py-4 sm:flex-row sm:justify-end sm:gap-3 max-lg:px-5 bajo:py-3">
-          <button type="button" onClick={onClose} className="btn btn-secondary">Cerrar</button>
+          <button ref={cerrarRef} type="button" onClick={onClose} className="btn btn-secondary">Cerrar</button>
           <button
             type="button"
             onClick={onSolicitar}
@@ -219,9 +230,19 @@ export function SiteList() {
   const { sites, loading, error, reload } = useSites();
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [filter, setFilter] = useState('todos');
   const [selectedSite, setSelectedSite] = useState(null);
   const buscadorRef = useRef(null);
+
+  // Efecto de Debounce: espera 1 segundo desde la última tecla presionada
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 1000); // 1000 ms = 1 segundo
+
+    return () => clearTimeout(timer);
+  }, [search]);
 
   const cerrarDetalle = React.useCallback(() => setSelectedSite(null), []);
 
@@ -231,18 +252,20 @@ export function SiteList() {
 
   const limpiarBusqueda = () => {
     setSearch('');
+    setDebouncedSearch('');
     buscadorRef.current?.focus();
   };
 
   const limpiarFiltros = () => {
     setSearch('');
+    setDebouncedSearch('');
     setFilter('todos');
   };
 
   const hayFiltros = search.trim() !== '' || filter !== 'todos';
 
   const visibles = sites
-    .filter((site) => (site.name ?? '').toLowerCase().includes(search.trim().toLowerCase()))
+    .filter((site) => (site.name ?? '').toLowerCase().includes(debouncedSearch.trim().toLowerCase()))
     .filter((site) => {
       if (filter === 'problemas') return site.problemCount > 0;
       if (filter === 'operativos') return site.problemCount === 0 && site.active;
@@ -252,7 +275,6 @@ export function SiteList() {
     .sort(ordenarCentros);
 
   const conProblemas = sites.filter((site) => site.problemCount > 0).length;
-  //si la carga falló y no hay datos, basta con el aviso de error (sin lista vacía ni contador)
   const soloError = Boolean(error) && !loading && sites.length === 0;
 
   return (
@@ -352,7 +374,6 @@ export function SiteList() {
         </div>
 
         {loading ? (
-          //esqueletos con la misma forma que las tarjetas
           <div className="grid gap-3 md:grid-cols-2" aria-hidden="true">
             {[1, 2, 3, 4].map((item) => (
               <div key={item} className="flex animate-pulse flex-col gap-3 rounded-xl bg-white p-4 ring-1 ring-black/5">
@@ -400,11 +421,11 @@ export function SiteList() {
                     setSelectedSite(site);
                   }
                 }}
-                className={`group flex h-full cursor-pointer flex-col rounded-xl border-2 p-4 shadow-sm max-lg:p-3 transition hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 ${site.problemCount ? 'border-danger/70 bg-red-50' : 'border-transparent bg-white ring-1 ring-black/5'}`}
+                className="group flex min-h-[220px] h-full justify-between cursor-pointer flex-col rounded-xl border-2 border-transparent bg-white p-4 ring-1 ring-black/5 shadow-sm max-lg:p-3 transition hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <h3 className={`truncate text-lg font-bold ${site.problemCount ? 'text-red-800' : 'text-brand-dark'}`}>{site.name}</h3>
+                    <h3 className="truncate text-lg font-bold text-brand-dark">{site.name}</h3>
                     <p className="text-sm text-gray-600">{site.area || 'Área no informada'}</p>
                   </div>
                   <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-bold ${site.active ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-200 text-gray-600'}`}>
@@ -427,7 +448,6 @@ export function SiteList() {
                     </span>
                   ))}
                 </div>
-                {/* El pie queda siempre abajo para que todas las tarjetas se vean alineadas */}
                 <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-4 max-lg:gap-x-2 max-lg:gap-y-1 max-lg:pt-3">
                   <p className={`text-sm font-bold ${site.problemCount ? 'text-red-800' : 'text-emerald-700'}`}>
                     {site.problemCount

@@ -71,6 +71,18 @@ body {
   }
 }
 
+/* Ocultar el botón nativo de mostrar/ocultar contraseña en Edge e Internet Explorer */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;    
+}
+
+/* Ocultar el icono nativo de contraseña en Chrome y Safari */
+input[type="password"]::-webkit-credentials-auto-fill-button,
+input[type="password"]::-webkit-caps-lock-indicator {
+  display: none !important;
+}
+
 /* Proyector (800x600 o menos alto): tarjetas y títulos algo más compactos. No aplica en >=1024px de ancho con >640px de alto */
 @layer components {
   @media (max-width: 1023.98px), (max-height: 640px) {

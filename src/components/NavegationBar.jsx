@@ -126,7 +126,7 @@ function ConfirmarCierre({ onCancelar, onConfirmar }) {
           <div>
             <h2 id="cerrar-sesion-titulo" className="text-lg font-bold text-brand-dark">¿Cerrar sesión?</h2>
             <p id="cerrar-sesion-texto" className="mt-1 text-sm text-brand-dark/80">
-              Tendrás que volver a ingresar tu usuario y contraseña para acceder al monitor.
+              Volveras a la pantalla de inicio de sesión.
             </p>
           </div>
         </div>
@@ -158,7 +158,7 @@ export function NavegationBar({ onLogout }) {
   return (
     <nav
       aria-label="Navegación principal"
-      className="flex h-full w-20 shrink-0 flex-col items-center gap-6 overflow-y-auto bg-brand-dark px-3 py-6 text-white md:w-64 md:px-4 max-lg:w-20! max-lg:px-3! bajo:gap-3! bajo:py-3!"
+      className="sticky top-0 flex h-screen w-20 shrink-0 flex-col items-center gap-6 overflow-y-auto bg-brand-dark px-3 py-6 text-white md:w-64 md:px-4 max-lg:w-20! max-lg:px-3! bajo:gap-3! bajo:py-3!"
     >
       {/* Logo y título centrados (a <1024px solo el logo, barra angosta) */}
       <div className="flex w-full flex-col items-center gap-3 text-center">

@@ -69,7 +69,7 @@ export function InterventionModal({ form, options, canSubmit, changeField, cance
             {/* En proyector el formulario va en dos columnas: Tipo y Centro lado a lado */}
             <div className="max-lg:col-span-2 max-lg:flex max-lg:flex-wrap max-lg:items-baseline max-lg:gap-x-3">
                 <h2 className="card-title max-lg:text-lg">Nueva intervención</h2>
-                <p className="mt-1 text-sm text-gray-600 max-lg:mt-0 max-lg:text-xs">Los campos marcados con <span className="text-danger">*</span> son obligatorios.</p>
+                <p className="mt-1 text-sm text-gray-600 max-lg:mt-0 max-lg:text-xs">Todos los campos son obligatorios</p>
             </div>
 
             {/* Resumen de errores, igual de claro que en el login */}

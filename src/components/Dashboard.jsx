@@ -96,8 +96,8 @@ export function Dashboard() {
       {/* Encabezado: título a la izquierda y estado en vivo a la derecha (en proyector, más compacto) */}
       <header className="flex flex-wrap items-end justify-between gap-4 border-b border-brand-light/60 pb-4 max-lg:items-center max-lg:gap-3 max-lg:pb-3 bajo:pb-3">
         <div>
-          <h1 className="text-3xl font-bold text-brand-dark sm:text-4xl max-lg:text-2xl! bajo:text-2xl!">Dashboard</h1>
-          <p className="mt-1 text-gray-600 max-lg:mt-0 max-lg:text-sm bajo:mt-0 bajo:text-sm">Oxígeno disuelto en tus centros de cultivo</p>
+          <h1 className="text-3xl font-bold text-brand-dark sm:text-4xl max-lg:text-2xl!">Dashboard</h1>
+          <p className="mt-1 text-gray-600 max-lg:mt-0 max-lg:text-sm">Oxígeno disuelto en tus centros de cultivo</p>
         </div>
         {/* Pasamos únicamente el error para que LiveStatus determine si está en vivo o sin conexión */}
         <LiveStatus error={d.error} />
