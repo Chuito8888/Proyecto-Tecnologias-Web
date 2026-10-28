@@ -14,6 +14,7 @@ import { OxygenChart } from './OxygenChart';
 import { timeAgo } from '../utils/format';
 
 //Ícono de refrescar (gira mientras se actualiza)
+//Quedará comentado para mayor coherencia de la página, sin embargo en cualquier momento se puede volver a colocar el botón
 function IconoRefrescar({ girando }) {
   return (
     <svg
@@ -160,20 +161,11 @@ export function Dashboard() {
             onShowChart={verDetalle}
           />
         </div>
-        <RecentInterventions interventions={d.recentInterventions} loading={d.loading} sinDatos={sinDatos} />
+        {/*<RecentInterventions interventions={d.recentInterventions} loading={d.loading} sinDatos={sinDatos} />*/}
       </div>
 
-      {/* Detalle del centro elegido: su perfil de profundidad y el gráfico del sensor */}
+      {/*Se muestra el gráfico del sensor seleccionado en el centro seleccionado*/}
       <div ref={detalleRef} className="grid scroll-mt-6 gap-6 xl:grid-cols-5 max-lg:scroll-mt-4 max-lg:gap-4">
-        <div className="min-w-0 xl:col-span-2">
-          <SiteProfile
-            center={d.selectedCenter}
-            selectedSensorId={d.selected?.sensorId}
-            onSelectSensor={d.setSelectedId}
-            loading={d.loading}
-            sinDatos={sinDatos}
-          />
-        </div>
         {/* En pantallas angostas el gráfico va primero, así "Ver gráfico" lo deja a la vista */}
         <div className="min-w-0 xl:col-span-3 max-lg:order-first">
           <OxygenChart
@@ -185,7 +177,21 @@ export function Dashboard() {
             sinDatos={sinDatos}
           />
         </div>
+        {/* El perfil de centro se retira de momento
+        <div className="min-w-0 xl:col-span-2">
+          <SiteProfile
+            center={d.selectedCenter}
+            selectedSensorId={d.selected?.sensorId}
+            onSelectSensor={d.setSelectedId}
+            loading={d.loading}
+            sinDatos={sinDatos}
+          />
+        </div>*/}
+        {/*Se muestra una lista con las ultimas intervenciones realizadas*/}
+        <RecentInterventions interventions={d.recentInterventions} loading={d.loading} sinDatos={sinDatos} />
       </div>
+
+      
     </div>
   );
 }
