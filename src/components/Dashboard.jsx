@@ -1,4 +1,4 @@
-//El enunciado dice que no hay un endpoint para el Dashboard asi que lo hacemo nosotros con el front end combinando las rutas anteriores
+//El enunciado dice que no hay un endpoint para el Dashboard asi que o hacemo nosotros con el front end combinando las rutas anteriores
 //Es la pantalla principal posterior al inicio de sesión y muestra un resumen de los datos y las métricas
 //Orden de arriba hacia abajo: estado general y mapa, lo que requiere atención, y el detalle del centro elegido
 //Todo lo crítico aparece primero
@@ -13,8 +13,8 @@ import { SiteProfile } from './SiteProfile';
 import { OxygenChart } from './OxygenChart';
 import { timeAgo } from '../utils/format';
 
-//Ícono de refrescar (gira mientras se actualiza)
-//Quedará comentado para mayor coherencia de la página, sin embargo en cualquier momento se puede volver a colocar el botón
+/* 
+// --- CÓDIGO ANTERIOR COMENTADO (Ícono de refrescar) ---
 function IconoRefrescar({ girando }) {
   return (
     <svg
@@ -33,26 +33,12 @@ function IconoRefrescar({ girando }) {
     </svg>
   );
 }
+*/
 
-//Barra de estado de arriba a la derecha: "En vivo" | "Actualizado hace X" | botón Actualizar
-//Todo va en una misma píldora y con la misma altura (h-10)
-//Se refresca sola cada 10 s para no re-dibujar todo el Dashboard
-function LiveStatus({ updatedAt, onRefresh, refreshing, error }) {
-  const [, setTick] = useState(0);
-
-  useEffect(() => {
-    const intervalo = setInterval(() => setTick((t) => t + 1), 10000);
-    return () => clearInterval(intervalo);
-  }, []);
-
-  //Si la última carga falló se avisa en la insignia en vez de mostrar "En vivo"
+// Barra de estado simplificada: solo muestra el cuadro "EN VIVO" o "SIN CONEXIÓN"
+function LiveStatus({ error }) {
+  // Si la última carga falló se avisa en la insignia en vez de mostrar "En vivo"
   const conexionOk = !error;
-
-  let textoEstado = 'Cargando…';
-  if (refreshing) textoEstado = 'Actualizando…';
-  else if (error && !updatedAt) textoEstado = 'Sin datos';
-  else if (error) textoEstado = `Último dato ${timeAgo(updatedAt)}`;
-  else if (updatedAt) textoEstado = `Actualizado ${timeAgo(updatedAt)}`;
 
   return (
     <div className="flex max-w-full items-center gap-2 rounded-xl bg-white/80 p-1 shadow-sm ring-1 ring-brand-light/50">
@@ -66,6 +52,7 @@ function LiveStatus({ updatedAt, onRefresh, refreshing, error }) {
         {conexionOk ? 'EN VIVO' : 'SIN CONEXIÓN'}
       </span>
 
+      {/* --- CÓDIGO ANTERIOR COMENTADO (Texto de actualización y botón Actualizar) ---
       <span className="h-6 w-px bg-brand-gray" aria-hidden="true" />
 
       <span
@@ -87,6 +74,7 @@ function LiveStatus({ updatedAt, onRefresh, refreshing, error }) {
         <span className="hidden sm:inline">Actualizar</span>
         <span className="sr-only sm:hidden">Actualizar</span>
       </button>
+      -------------------------------------------------------------------------------- */}
     </div>
   );
 }
@@ -111,7 +99,8 @@ export function Dashboard() {
           <h1 className="text-3xl font-bold text-brand-dark sm:text-4xl max-lg:text-2xl! bajo:text-2xl!">Dashboard</h1>
           <p className="mt-1 text-gray-600 max-lg:mt-0 max-lg:text-sm bajo:mt-0 bajo:text-sm">Oxígeno disuelto en tus centros de cultivo</p>
         </div>
-        <LiveStatus updatedAt={d.updatedAt} onRefresh={d.refresh} refreshing={d.refreshing} error={d.error} />
+        {/* Pasamos únicamente el error para que LiveStatus determine si está en vivo o sin conexión */}
+        <LiveStatus error={d.error} />
       </header>
 
       {/* Error general de carga, con opción de reintentar */}
@@ -149,21 +138,6 @@ export function Dashboard() {
         </div>
       </div>
 
-      {/* Lo que requiere atención, justo después del resumen */}
-      <div className="grid gap-6 xl:grid-cols-3 max-lg:gap-4">
-        <div className="min-w-0 xl:col-span-2">
-          <AlertsTable
-            alerts={d.alerts}
-            trends={d.trends}
-            loading={d.loading}
-            sinDatos={sinDatos}
-            onOpenIntervention={d.openIntervention}
-            onShowChart={verDetalle}
-          />
-        </div>
-        {/*<RecentInterventions interventions={d.recentInterventions} loading={d.loading} sinDatos={sinDatos} />*/}
-      </div>
-
       {/*Se muestra el gráfico del sensor seleccionado en el centro seleccionado*/}
       <div ref={detalleRef} className="grid scroll-mt-6 gap-6 xl:grid-cols-5 max-lg:scroll-mt-4 max-lg:gap-4">
         {/* En pantallas angostas el gráfico va primero, así "Ver gráfico" lo deja a la vista */}
@@ -187,11 +161,25 @@ export function Dashboard() {
             sinDatos={sinDatos}
           />
         </div>*/}
+
+      </div>
+
+      {/* Lo que requiere atención, luego del mapa y del gráfico */}
+      <div className="grid gap-6 xl:grid-cols-3 max-lg:gap-4">
+        <div className="min-w-0 xl:col-span-2">
+          <AlertsTable
+            alerts={d.alerts}
+            trends={d.trends}
+            loading={d.loading}
+            sinDatos={sinDatos}
+            onOpenIntervention={d.openIntervention}
+            onShowChart={verDetalle}
+          />
+        </div>
         {/*Se muestra una lista con las ultimas intervenciones realizadas*/}
         <RecentInterventions interventions={d.recentInterventions} loading={d.loading} sinDatos={sinDatos} />
       </div>
 
-      
     </div>
   );
 }

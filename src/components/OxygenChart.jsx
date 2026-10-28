@@ -42,18 +42,37 @@ function Leyenda({ tieneRango }) {
   );
 }
 
+// Mapeo de estilos de color para los estados del sensor en el título del gráfico
+const ESTADO_BADGE_CLASSES = {
+  ok: 'bg-emerald-100 text-emerald-800 border border-emerald-300',
+  out_of_range: 'bg-amber-100 text-amber-800 border border-amber-300',
+  no_data: 'bg-red-100 text-red-800 border border-red-300',
+};
+
 export function OxygenChart({ sensors, selected, onSelect, points, loading, sinDatos = false }) {
   const min = selected?.min;
   const max = selected?.max;
   const tieneRango = min !== null && min !== undefined && max !== null && max !== undefined;
 
+  // Obtenemos la información del estado del sensor seleccionado actual
+  const estadoInfo = selected ? ESTADOS_SENSOR[selected.status] : null;
+  const badgeClass = selected ? (ESTADO_BADGE_CLASSES[selected.status] || 'bg-gray-100 text-gray-800') : '';
+
   return (
     <section className="card flex h-full flex-col max-lg:p-4" aria-busy={loading}>
       <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <h2 className="card-title truncate">
-            Oxígeno{selected ? ` · ${selected.sensorName}` : ''}
-          </h2>
+          <div className="flex flex-wrap items-center gap-2">
+            <h2 className="card-title truncate">
+              Oxígeno{selected ? ` · ${selected.sensorName}` : ''}
+            </h2>
+            {/* Insignia de estado con los colores requeridos (verde, amarillo o rojo) */}
+            {selected && estadoInfo && (
+              <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${badgeClass}`}>
+                {estadoInfo.label}
+              </span>
+            )}
+          </div>
           <p className="text-sm text-gray-600">
             Últimas 24 h{selected && tieneRango ? ` · rango seguro ${min}–${max} mg/L` : ''}
           </p>
@@ -77,7 +96,7 @@ export function OxygenChart({ sensors, selected, onSelect, points, loading, sinD
         )}
       </div>
 
-      {/* Recuadro interior del gráfico, como en el Canva (en el proyector, unos 260 px de alto) */}
+      {/* Recuadro interior del gráfico */}
       <div className="flex min-h-64 flex-1 max-lg:min-h-0 max-lg:h-[260px] max-lg:flex-none flex-col rounded-xl border border-brand-gray bg-white p-3">
         {loading && (
           <div className="flex flex-1 animate-pulse flex-col justify-end gap-2 p-2" aria-hidden="true">
