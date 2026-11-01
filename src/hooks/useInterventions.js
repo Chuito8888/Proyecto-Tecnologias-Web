@@ -71,23 +71,22 @@ export function useInterventions(initialSiteId = '') {
         setLoading(true);
         setError(null);
 
-        const token = getToken();
-        let url = `${API_URL}/interventions?page=${page}&page_size=${NumPags}`;
+        const headers = { 'Authorization': `Bearer ${getToken()}` };
 
-        if (status) {
-            url += `&status=${status}`; // Agrega el filtro de estado si está definido
-        }
+        // Arma la URL de cualquier página, respetando el filtro de estado
+        const urlPagina = (n) => {
+            let url = `${API_URL}/interventions?page=${n}&page_size=${NumPags}`;
+            if (status) {
+                url += `&status=${status}`;
+            }
+            return url;
+        };
 
         //Se ignoran las respuestas de peticiones viejas (filtro o página cambiados rápido)
         const controller = new AbortController();
         let activo = true;
 
-        fetch(url, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-            },
-            signal: controller.signal,
-        })
+        fetch(urlPagina(page), { headers, signal: controller.signal })
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("No se pudieron obtener las intervenciones.");
@@ -98,7 +97,22 @@ export function useInterventions(initialSiteId = '') {
                 if (!activo) return;
                 const data = json.data ?? [];
                 setInterventions(data);
-                setHasNext(data.length === NumPags);
+
+                // Página incompleta: es la última
+                if (data.length < NumPags) {
+                    setHasNext(false);
+                    return;
+                }
+
+                // Página llena: se mira si la siguiente tiene algo
+                return fetch(urlPagina(page + 1), { headers, signal: controller.signal })
+                    .then((res) => (res.ok ? res.json() : { data: [] }))
+                    .then((next) => {
+                        if (activo) setHasNext((next.data ?? []).length > 0);
+                    })
+                    .catch(() => {
+                        if (activo) setHasNext(false); // si falla esta comprobación, se bloquea "Siguiente"
+                    });
             })
             .catch((err) => {
                 if (!activo || err.name === "AbortError") return;
