@@ -7,6 +7,8 @@ import { InterventionsPage } from './pages/InterventionsPage';
 import {useState} from 'react';
 import {isAuthenticated, logout} from './hooks/useAuth.js';
 import {Login} from './components/Login.jsx';
+import { SiteDetailPage } from './pages/SiteDetailPage';
+import { SensorDetailPage } from './pages/SensorDetailPage';
 
 
 export function App() {
@@ -41,6 +43,8 @@ return (
           <Routes>
             <Route path="/" element={<HomePage />} /> {/*Contiene todo el dashboard*/}
             <Route path="/centros" element={<SitesPage />} /> {/*Contiene todo lo relacionado a centros y sitios*/}
+            <Route path="/centros/:siteId" element={<SiteDetailPage />} />
+            <Route path="/centros/:siteId/sensores/:sensorId" element={<SensorDetailPage />} />
             <Route path="/intervenciones" element={<InterventionsPage />} /> {/*Contiene todo lo relacionado a intervenciones*/}
           </Routes>
         </main>

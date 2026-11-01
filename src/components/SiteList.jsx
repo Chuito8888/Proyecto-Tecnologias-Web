@@ -414,11 +414,11 @@ export function SiteList() {
                 role="button"
                 tabIndex={0}
                 aria-label={`Ver detalle de ${site.name}`}
-                onClick={() => setSelectedSite(site)}
+                onClick={() => navigate(`/centros/${site.id}`)}
                 onKeyDown={(event) => {
                   if (event.key === 'Enter' || event.key === ' ') {
                     event.preventDefault();
-                    setSelectedSite(site);
+                    navigate(`/centros/${site.id}`);
                   }
                 }}
                 className="group flex min-h-[220px] h-full justify-between cursor-pointer flex-col rounded-xl border-2 border-transparent bg-white p-4 ring-1 ring-black/5 shadow-sm max-lg:p-3 transition hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
