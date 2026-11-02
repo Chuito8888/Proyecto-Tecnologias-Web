@@ -10,10 +10,6 @@ export async function loginUSer(username, password) {
     formData.append('username', username);
     formData.append('password', password);
 
-    //Para comprobar problemas con la ruta en consola
-    const fullUrl = `${API_URL}/token`;
-    console.log("Intentando conectar a:", fullUrl);
-
     try {
         const response = await fetch(`${API_URL}/token`, {
             method: 'POST',
